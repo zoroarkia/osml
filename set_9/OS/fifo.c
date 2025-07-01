@@ -1,28 +1,28 @@
 #include <stdio.h>
-#include <unistd.h>
 #include <stdlib.h>
-#include <string.h>
 #include <fcntl.h>
 #include <sys/stat.h>
-#include <sys/types.h>
+#include <unistd.h>
+#include <string.h>
+
 int main()
 {
-    // Write C code here
     int fd;
-    char *myfifo = "/tmp/myfifo";
-    mkfifo(myfifo, 0666);
-    char arr1[80], arr2[80];
-    while (1)
-    {
-        fd = open(myfifo, O_WRONLY);
-        fgets(arr2, 80, stdin);
-        write(fd, arr2, strlen(arr2) + 1);
-        close(fd);
-        fd = open(myfifo, O_RDONLY);
-        read(fd, arr1, sizeof(arr1));
-        printf("User2: %s\n", arr1);
-        close(fd);
-    }
+    char *fifopath = "type/myfifo";
+    char writemsg[80] = "hello";
+    char readmsg[80];
+
+    mkfifo(fifopath, 0666);
+
+    fd = open(fifopath, O_WRONLY);
+    write(fd, writemsg, strlen(writemsg) + 1);
+
+    close(fd);
+
+    fd = open(fifopath, O_RDONLY);
+    read(fd, readmsg, sizeof(readmsg));
+    printf("Received msg: %s\n", writemsg);
+    close(fd);
 
     return 0;
 }
